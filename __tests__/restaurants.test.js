@@ -37,7 +37,7 @@ describe('restaurant routes', () => {
     pool.end();
   });
 
-  it('GET api/v1/restaurants returns a list of restaurants', [authenticate], async () => {
+  it('GET api/v1/restaurants returns a list of restaurants', async () => {
     const [agent] = await registerAndLogin();
     const res = await agent.get('/api/v1/restaurants');
     expect(res.status).toEqual(200);
