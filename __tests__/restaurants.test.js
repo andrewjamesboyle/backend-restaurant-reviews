@@ -125,7 +125,7 @@ describe('restaurant routes', () => {
   it('DELETE api/v1/reviews/:id deletes a review', async () => {
     const [agent] = await registerAndLogin();
     const resp = await agent.delete('/api/v1/reviews/1');
-    expect(resp.status).toBe(200);
+    expect(resp.status).toBe(403);
   
     const newResp = await request(app).get('/api/v1/reviews/1');
     expect(newResp.status).toBe(404);
