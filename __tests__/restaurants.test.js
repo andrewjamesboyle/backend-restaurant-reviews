@@ -3,6 +3,8 @@ const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
 const UserService = require('../lib/services/UserService');
+const authorize = require('../lib/middleware/authorize');
+const authenticate = require('../lib/middleware/authenticate');
 
 // Dummy user for testing
 const mockUser = {
@@ -105,12 +107,29 @@ describe('restaurant routes', () => {
     `);
   });
 
-  it('POST api/v1/restaurant/reviews creates a new review', async () => {
+  it('POST api/v1/restaurant/:id/reviews creates a new review', async () => {
     const [agent] = await registerAndLogin();
     const res = await agent
       .post('/api/v1/restaurants/1/reviews')
       .send({ stars: 5, detail: 'It was okay' });
     expect(res.status).toEqual(200);
-    expect(res.json).toMatchInlineSnapshot(`undefined`);
+    expect(res.body).toMatchInlineSnapshot(`
+      Object {
+        "detail": "It was okay",
+        "id": "4",
+        "restaurant_id": "1",
+        "stars": 5,
+        "user_id": "4",
+      }
+    `);
+  });
+
+  it('DELETE api/v1/reviews/:id deletes a review', async () => {
+    const [agent] = await registerAndLogin();
+    const resp = await agent.delete('/api/v1/reviews/1');
+    expect(resp.status).toBe(200);
+  
+    const newResp = await request(app).get('/api/v1/reviews/1');
+    expect(newResp.status).toBe(404);
   });
 });
