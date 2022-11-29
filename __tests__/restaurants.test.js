@@ -3,8 +3,6 @@ const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
 const UserService = require('../lib/services/UserService');
-const authorize = require('../lib/middleware/authorize');
-const authenticate = require('../lib/middleware/authenticate');
 
 // Dummy user for testing
 const mockUser = {
