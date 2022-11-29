@@ -104,4 +104,12 @@ describe('restaurant routes', () => {
       }
     `);
   });
+
+  it('POST api/v1/restaurant/reviews creates a new review', async () => {
+    const [agent] = await registerAndLogin();
+    const res = await agent.post('/api/v1/restaurants/1/reviews').send({ stars: 5, detail: 'It was okay' });
+    expect(res.status).toEqual(200);
+    expect(res.json).toMatchInlineSnapshot();
+  });
+  
 });
