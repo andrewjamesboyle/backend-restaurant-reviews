@@ -122,12 +122,37 @@ describe('restaurant routes', () => {
     `);
   });
 
-  it('DELETE api/v1/reviews/:id deletes a review', async () => {
-    const [agent] = await registerAndLogin();
-    const resp = await agent.delete('/api/v1/reviews/1');
-    expect(resp.status).toBe(403);
-  
-    const newResp = await request(app).get('/api/v1/reviews/1');
-    expect(newResp.status).toBe(404);
+  it('DELETE /api/v1/reviews/:id deletes reviews if admin or user who posted review', async () => {
+    const mockAdmin = {
+      firstName: 'admin',
+      lastName: 'admin',
+      email: 'admin',
+      password: '12345',
+    };
+    const [agentAdmin] = await registerAndLogin(mockAdmin);
+
+    const res1 = await agentAdmin.delete('/api/v1/reviews/1');
+    expect(res1.body).toMatchInlineSnapshot(`
+      Object {
+        "detail": "Best restaurant ever!",
+        "id": "1",
+        "restaurant_id": "1",
+        "stars": 5,
+        "user_id": "1",
+      }
+    `);
+
+    const agent = request.agent(app);
+    await agent.post('/api/v1/users/sessions').send({
+      email: 'fakeemail@example.com',
+      password: 'password',
+    });
+    const res = await agent.delete('/api/v1/reviews/1');
+    expect(res.body).toMatchInlineSnapshot(`
+      Object {
+        "message": "You must be signed in to continue",
+        "status": 401,
+      }
+    `);
   });
 });
